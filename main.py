@@ -17,7 +17,10 @@ from aiogram.utils.markdown import hbold, hitalic, hcode, hblockquote
 
 # ---------- Конфигурация ----------
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8494220705:AAH68tF-kA6yqoxFDr0QSUZ3LlkadxZPSJw")
-ADMIN_ID = int(os.getenv("ADMIN_ID", 8400055743,8297446667))
+# Список администраторов (можно задать через переменную окружения ADMIN_IDS, разделяя запятыми)
+ADMIN_IDS_STR = os.getenv("ADMIN_IDS", "8400055743,8297446667")
+ADMIN_IDS = [int(x.strip()) for x in ADMIN_IDS_STR.split(",") if x.strip()]
+# Для обратной совместимости оставляем ADMIN_ID как первый (не используется в проверках, но может быть где-то в старом коде – мы заменили все проверки на ADMIN_IDS)
 BANNER_URL = "https://i.ibb.co/XfbYk9Vc/IMG-1254.jpg"
 PORT = int(os.getenv("PORT", 8080))
 
@@ -605,13 +608,10 @@ async def start_command(message: Message, state: FSMContext):
             deal = db.get_deal_by_memo(memo)
             if deal:
                 if deal[1] != user_id and deal[2] is None:
-                    # Убрана проверка баланса при вступлении
-                    # Проверяем, что сделка ещё не завершена и не отменена
                     if deal[6] in ('completed', 'cancelled'):
                         await message.answer("❌ Эта сделка уже завершена или отменена.")
                         return
                     db.update_deal(deal[0], partner_id=user_id, status='active')
-                    # Уведомление продавцу с подробностями
                     creator_id = deal[1]
                     buyer_name = first_name or "Пользователь"
                     buyer_username = username or "без username"
@@ -881,14 +881,15 @@ async def support_message(message: Message, state: FSMContext):
     user_id = message.from_user.id
     text = message.text
     ticket_id = db.create_support_ticket(user_id, text)
-    # Отправляем админу
     try:
-        await bot.send_message(
-            ADMIN_ID,
-            f"📩 Новое обращение #{ticket_id} от {user_id} (@{message.from_user.username or 'без username'}):\n\n{text}"
-        )
+        # Отправляем всем администраторам
+        for admin_id in ADMIN_IDS:
+            await bot.send_message(
+                admin_id,
+                f"📩 Новое обращение #{ticket_id} от {user_id} (@{message.from_user.username or 'без username'}):\n\n{text}"
+            )
     except Exception as e:
-        logging.error(f"Не удалось отправить сообщение админу: {e}")
+        logging.error(f"Не удалось отправить сообщение админам: {e}")
     await state.clear()
     lang = get_user_lang(user_id)
     await send_banner_message(user_id, get_text(user_id, 'support_sent'), reply_markup=main_menu(lang))
@@ -896,36 +897,36 @@ async def support_message(message: Message, state: FSMContext):
 # ---------- Админ-панель ----------
 @dp.message(Command("wrteam"))
 async def admin_panel_command(message: Message):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         await message.answer("⛔ У вас нет доступа.")
         return
     await message.delete()
-    lang = get_user_lang(ADMIN_ID)
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_panel'), reply_markup=admin_panel(lang))
+    lang = get_user_lang(message.from_user.id)
+    await send_banner_message(message.from_user.id, get_text(message.from_user.id, 'admin_panel'), reply_markup=admin_panel(lang))
 
 @dp.callback_query(F.data == "admin_help")
 async def admin_help(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    lang = get_user_lang(ADMIN_ID)
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button(lang))
+    lang = get_user_lang(callback.from_user.id)
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'admin_help'), reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "admin_chat")
 async def admin_chat_callback(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    lang = get_user_lang(ADMIN_ID)
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_chat_instruction'), reply_markup=back_button(lang))
+    lang = get_user_lang(callback.from_user.id)
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'admin_chat_instruction'), reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.message(Command("chat"))
 async def chat_command(message: Message):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         await message.answer("⛔ Нет доступа.")
         return
     parts = message.text.split(maxsplit=2)
@@ -949,25 +950,25 @@ async def chat_command(message: Message):
 # hostlebuy
 @dp.callback_query(F.data == "admin_hostlebuy")
 async def admin_hostlebuy_callback(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await state.set_state(HostleBuyAdmin.memo)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'enter_memo'))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'enter_memo'))
     await callback.answer()
 
 @dp.message(StateFilter(HostleBuyAdmin.memo))
 async def hostlebuy_memo(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     memo = message.text.strip()
     deal = db.get_deal_by_memo(memo)
     if not deal:
-        await message.answer(get_text(ADMIN_ID, 'deal_not_found'))
+        await message.answer(get_text(message.from_user.id, 'deal_not_found'))
         return
     if deal[6] not in ('active', 'pending'):
-        await message.answer(get_text(ADMIN_ID, 'deal_not_active'))
+        await message.answer(get_text(message.from_user.id, 'deal_not_active'))
         return
     db.update_deal(deal[0], status='paid')
     creator_id, partner_id = deal[1], deal[2]
@@ -975,51 +976,51 @@ async def hostlebuy_memo(message: Message, state: FSMContext):
         await bot.send_message(creator_id, get_text(creator_id, 'deal_paid_user', memo=memo), parse_mode='HTML', reply_markup=support_button(get_user_lang(creator_id)))
     if partner_id:
         await bot.send_message(partner_id, get_text(partner_id, 'deal_paid_buyer', memo=memo), parse_mode='HTML', reply_markup=support_button(get_user_lang(partner_id)))
-    await message.answer(get_text(ADMIN_ID, 'payment_marked', memo=memo))
+    await message.answer(get_text(message.from_user.id, 'payment_marked', memo=memo))
     await state.clear()
 
 # ref
 @dp.callback_query(F.data == "admin_ref")
 async def admin_ref_callback(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await state.set_state(RefAdmin.deal_id)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'enter_deal_id_for_ref'))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'enter_deal_id_for_ref'))
     await callback.answer()
 
 @dp.message(StateFilter(RefAdmin.deal_id))
 async def ref_deal_id(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     deal_id = message.text.strip()
     deal = db.get_deal(deal_id)
     if not deal:
-        await message.answer(get_text(ADMIN_ID, 'deal_not_found'))
+        await message.answer(get_text(message.from_user.id, 'deal_not_found'))
         return
     creator_id, partner_id = deal[1], deal[2]
     if creator_id:
         await bot.send_message(creator_id, f"❌ Менеджер @GGselSupp не обнаружил подарок по сделке {deal_id}. Обратитесь в поддержку.", reply_markup=support_button(get_user_lang(creator_id)))
     if partner_id:
         await bot.send_message(partner_id, f"❌ Менеджер @GGselSupp не обнаружил подарок по сделке {deal_id}. Обратитесь в поддержку.", reply_markup=support_button(get_user_lang(partner_id)))
-    await message.answer(get_text(ADMIN_ID, 'ref_sent'))
+    await message.answer(get_text(message.from_user.id, 'ref_sent'))
     await state.clear()
 
 # boost_success
 @dp.callback_query(F.data == "admin_boost")
 async def admin_boost_callback(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await state.set_state(BoostSuccessAdmin.user_id)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'enter_user_id_boost'))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'enter_user_id_boost'))
     await callback.answer()
 
 @dp.message(StateFilter(BoostSuccessAdmin.user_id))
 async def boost_user_id(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         user_id = int(message.text)
@@ -1028,11 +1029,11 @@ async def boost_user_id(message: Message, state: FSMContext):
         return
     await state.update_data(user_id=user_id)
     await state.set_state(BoostSuccessAdmin.count)
-    await message.answer(get_text(ADMIN_ID, 'enter_boost_count'))
+    await message.answer(get_text(message.from_user.id, 'enter_boost_count'))
 
 @dp.message(StateFilter(BoostSuccessAdmin.count))
 async def boost_count(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         count = int(message.text)
@@ -1042,23 +1043,23 @@ async def boost_count(message: Message, state: FSMContext):
     data = await state.get_data()
     user_id = data['user_id']
     db.increment_successful_deals(user_id, count)
-    await message.answer(get_text(ADMIN_ID, 'boost_success', user_id=user_id, count=count))
+    await message.answer(get_text(message.from_user.id, 'boost_success', user_id=user_id, count=count))
     await state.clear()
 
 # add_balance
 @dp.callback_query(F.data == "admin_add_balance")
 async def admin_add_balance_callback(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await state.set_state(AddBalanceAdmin.user_id)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'enter_user_id_add_balance'))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'enter_user_id_add_balance'))
     await callback.answer()
 
 @dp.message(StateFilter(AddBalanceAdmin.user_id))
 async def add_balance_user_id(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         user_id = int(message.text)
@@ -1067,11 +1068,11 @@ async def add_balance_user_id(message: Message, state: FSMContext):
         return
     await state.update_data(user_id=user_id)
     await state.set_state(AddBalanceAdmin.amount)
-    await message.answer(get_text(ADMIN_ID, 'enter_amount_add_balance'))
+    await message.answer(get_text(message.from_user.id, 'enter_amount_add_balance'))
 
 @dp.message(StateFilter(AddBalanceAdmin.amount))
 async def add_balance_amount(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         amount = float(message.text)
@@ -1083,28 +1084,28 @@ async def add_balance_amount(message: Message, state: FSMContext):
     db.add_balance(user_id, amount)
     user_text = get_text(user_id, 'balance_notification', amount=amount)
     await bot.send_message(user_id, user_text, parse_mode='HTML')
-    await message.answer(get_text(ADMIN_ID, 'balance_added', user_id=user_id, amount=amount))
+    await message.answer(get_text(message.from_user.id, 'balance_added', user_id=user_id, amount=amount))
     await state.clear()
 
 # complete_deal
 @dp.callback_query(F.data == "admin_complete_deal")
 async def admin_complete_deal_callback(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await state.set_state(CompleteDealAdmin.memo)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'enter_memo_complete'))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'enter_memo_complete'))
     await callback.answer()
 
 @dp.message(StateFilter(CompleteDealAdmin.memo))
 async def complete_deal_memo(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     memo = message.text.strip()
     deal = db.get_deal_by_memo(memo)
     if not deal:
-        await message.answer(get_text(ADMIN_ID, 'deal_not_found'))
+        await message.answer(get_text(message.from_user.id, 'deal_not_found'))
         return
     if deal[6] != 'paid':
         await message.answer("❌ Сделка должна быть сначала отмечена как оплаченная (/hostlebuy).")
@@ -1119,18 +1120,15 @@ async def complete_deal_memo(message: Message, state: FSMContext):
         return
 
     if db.get_user_balance(partner_id) < amount:
-        await message.answer(get_text(ADMIN_ID, 'not_enough_balance'))
+        await message.answer(get_text(message.from_user.id, 'not_enough_balance'))
         return
 
-    # Списание с покупателя и зачисление продавцу
     db.add_balance(partner_id, -amount)
     db.add_balance(creator_id, amount)
 
-    # Увеличиваем счетчик успешных сделок
     db.increment_successful_deals(creator_id)
     db.increment_successful_deals(partner_id)
 
-    # Реферальный бонус (50% от комиссии 5%)
     commission_rate = 0.05
     ref_bonus_rate = 0.5
     bonus = amount * commission_rate * ref_bonus_rate
@@ -1141,9 +1139,8 @@ async def complete_deal_memo(message: Message, state: FSMContext):
         db.add_referral_bonus(referrer_id, bonus, creator_id, deal[0])
 
     db.update_deal(deal[0], status='completed', completed_at=datetime.now().isoformat())
-    await message.answer(get_text(ADMIN_ID, 'deal_completed', memo=memo))
+    await message.answer(get_text(message.from_user.id, 'deal_completed', memo=memo))
 
-    # Уведомления участникам с кнопкой поддержки
     if creator_id:
         await bot.send_message(creator_id, get_text(creator_id, 'deal_completed_user', memo=memo), parse_mode='HTML', reply_markup=support_button(get_user_lang(creator_id)))
     if partner_id:
@@ -1153,45 +1150,45 @@ async def complete_deal_memo(message: Message, state: FSMContext):
 # Withdraw requests
 @dp.callback_query(F.data == "admin_withdraws")
 async def admin_withdraws(callback: CallbackQuery):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     requests = db.get_withdraw_requests(status='pending')
     if not requests:
-        text = get_text(ADMIN_ID, 'no_withdraw_requests')
+        text = get_text(callback.from_user.id, 'no_withdraw_requests')
     else:
         lines = []
         for req in requests:
             lines.append(f"<b>ID заявки:</b> {req[0]}, <b>Пользователь:</b> {req[1]}, <b>Сумма:</b> {req[2]}, <b>Реквизиты:</b> {req[3]}")
-        text = get_text(ADMIN_ID, 'withdraw_requests', requests='\n'.join(lines))
-    lang = get_user_lang(ADMIN_ID)
+        text = get_text(callback.from_user.id, 'withdraw_requests', requests='\n'.join(lines))
+    lang = get_user_lang(callback.from_user.id)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, text, reply_markup=withdraw_requests_menu(lang))
+    await send_banner_message(callback.from_user.id, text, reply_markup=withdraw_requests_menu(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "approve_withdraw")
 async def approve_withdraw(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, "Введите ID заявки для подтверждения:")
+    await send_banner_message(callback.from_user.id, "Введите ID заявки для подтверждения:")
     await state.set_state("approve_withdraw_id")
     await callback.answer()
 
 @dp.callback_query(F.data == "reject_withdraw")
 async def reject_withdraw(callback: CallbackQuery, state: FSMContext):
-    if callback.from_user.id != ADMIN_ID:
+    if callback.from_user.id not in ADMIN_IDS:
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, "Введите ID заявки для отклонения:")
+    await send_banner_message(callback.from_user.id, "Введите ID заявки для отклонения:")
     await state.set_state("reject_withdraw_id")
     await callback.answer()
 
 @dp.message(StateFilter("approve_withdraw_id"))
 async def approve_withdraw_id(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         req_id = int(message.text)
@@ -1204,7 +1201,7 @@ async def approve_withdraw_id(message: Message, state: FSMContext):
 
 @dp.message(StateFilter("reject_withdraw_id"))
 async def reject_withdraw_id(message: Message, state: FSMContext):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         return
     try:
         req_id = int(message.text)
@@ -1218,11 +1215,11 @@ async def reject_withdraw_id(message: Message, state: FSMContext):
 # /gtteam - справка
 @dp.message(Command("gtteam"))
 async def gtteam_command(message: Message):
-    if message.from_user.id != ADMIN_ID:
+    if message.from_user.id not in ADMIN_IDS:
         await message.answer("⛔ Нет доступа.")
         return
-    lang = get_user_lang(ADMIN_ID)
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button(lang))
+    lang = get_user_lang(message.from_user.id)
+    await send_banner_message(message.from_user.id, get_text(message.from_user.id, 'admin_help'), reply_markup=back_button(lang))
 
 # ---------- Веб-сервер и запуск ----------
 async def handle_health(request):
@@ -1231,7 +1228,6 @@ async def handle_health(request):
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    # Запускаем веб-сервер в том же event loop
     app = web.Application()
     app.router.add_get('/', handle_health)
     runner = web.AppRunner(app)
@@ -1239,7 +1235,6 @@ async def main():
     site = web.TCPSite(runner, host='0.0.0.0', port=PORT)
     await site.start()
 
-    # Запускаем бота
     await dp.start_polling(bot, skip_updates=True)
 
 if __name__ == "__main__":
