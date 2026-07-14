@@ -356,12 +356,12 @@ TEXTS = {
     'ru': {
         'welcome': f"""🌟 <b>Добро пожаловать в GGSel!</b> 🚀
 
-{hblockquote("""Ваш надёжный P2P-гарант:
+{hblockquote('''Ваш надёжный P2P-гарант:
 ▸ Автоматические сделки с NFT и валютами
 ▸ Полная защита обеих сторон
 ▸ Реферальная программа — 50% от комиссии
 ▸ Передача товара осуществляется напрямую между участниками сделки.
-   В случае возникновения вопросов — обращайтесь в техподдержку.""")}""",
+   В случае возникновения вопросов — обращайтесь в техподдержку.''')}""",
         'requisites': "💎 <b>Ваши реквизиты:</b>\n\n{hblockquote(requisites)}",
         'no_requisites': "📌 У вас пока нет реквизитов. Добавьте их, нажав кнопку ниже.",
         'enter_requisites': "✏️ Введите текст ваших реквизитов (номер карты, кошелёк и т.п.):",
@@ -448,12 +448,12 @@ TEXTS = {
     'en': {
         'welcome': f"""🌟 <b>Welcome to GGSel!</b> 🚀
 
-{hblockquote("""Your reliable P2P guarantor:
+{hblockquote('''Your reliable P2P guarantor:
 ▸ Automatic deals with NFT and currencies
 ▸ Full protection of both parties
 ▸ Referral program — 50% of commission
 ▸ Goods are transferred directly between participants of the deal.
-   If you have any questions, contact support.""")}""",
+   If you have any questions, contact support.''')}""",
         'requisites': "💎 <b>Your requisites:</b>\n\n{hblockquote(requisites)}",
         'no_requisites': "📌 You have no requisites yet. Add them using the button below.",
         'enter_requisites': "✏️ Enter your requisites (card number, wallet, etc.):",
