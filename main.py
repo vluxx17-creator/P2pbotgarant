@@ -244,79 +244,150 @@ class AddBalanceAdmin(StatesGroup):
 class CompleteDealAdmin(StatesGroup):
     memo = State()
 
-# ---------- Клавиатуры ----------
+# ---------- Локализованные тексты для кнопок ----------
+BUTTONS = {
+    'ru': {
+        'requisites': "💳 Мои реквизиты",
+        'create_deal': "➕ Создать сделку",
+        'balance': "💰 Баланс",
+        'my_deals': "📋 Мои сделки",
+        'referrals': "👥 Рефералы",
+        'language': "🌐 Язык",
+        'support': "🛠 Техподдержка",
+        'back': "🔙 Назад",
+        'add_requisites': "✏️ Добавить/Изменить",
+        'deposit': "💳 Пополнить",
+        'withdraw': "💸 Вывести",
+        'admin_chat': "📨 Ответить пользователю",
+        'admin_hostlebuy': "✅ Отметить оплату",
+        'admin_ref': "❌ Уведомить о подарке",
+        'admin_boost': "⬆️ Накрутить сделки",
+        'admin_add_balance': "➕ Добавить баланс",
+        'admin_withdraws': "📊 Заявки на вывод",
+        'admin_complete_deal': "✅ Завершить сделку",
+        'admin_help': "📖 Справка",
+        'approve_withdraw': "✅ Подтвердить",
+        'reject_withdraw': "❌ Отклонить",
+    },
+    'en': {
+        'requisites': "💳 My requisites",
+        'create_deal': "➕ Create deal",
+        'balance': "💰 Balance",
+        'my_deals': "📋 My deals",
+        'referrals': "👥 Referrals",
+        'language': "🌐 Language",
+        'support': "🛠 Support",
+        'back': "🔙 Back",
+        'add_requisites': "✏️ Add/Edit",
+        'deposit': "💳 Deposit",
+        'withdraw': "💸 Withdraw",
+        'admin_chat': "📨 Reply to user",
+        'admin_hostlebuy': "✅ Mark payment",
+        'admin_ref': "❌ Gift notification",
+        'admin_boost': "⬆️ Boost deals",
+        'admin_add_balance': "➕ Add balance",
+        'admin_withdraws': "📊 Withdraw requests",
+        'admin_complete_deal': "✅ Complete deal",
+        'admin_help': "📖 Help",
+        'approve_withdraw': "✅ Approve",
+        'reject_withdraw': "❌ Reject",
+    }
+}
+
+# ---------- Клавиатуры с локализацией ----------
 def main_menu(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
     builder = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Мои реквизиты", callback_data="requisites"),
-         InlineKeyboardButton(text="➕ Создать сделку", callback_data="create_deal")],
-        [InlineKeyboardButton(text="💰 Баланс", callback_data="balance"),
-         InlineKeyboardButton(text="📋 Мои сделки", callback_data="my_deals")],
-        [InlineKeyboardButton(text="👥 Рефералы", callback_data="referrals"),
-         InlineKeyboardButton(text="🌐 Язык", callback_data="language")],
-        [InlineKeyboardButton(text="🛠 Техподдержка", callback_data="support")]
+        [InlineKeyboardButton(text=btns['requisites'], callback_data="requisites"),
+         InlineKeyboardButton(text=btns['create_deal'], callback_data="create_deal")],
+        [InlineKeyboardButton(text=btns['balance'], callback_data="balance"),
+         InlineKeyboardButton(text=btns['my_deals'], callback_data="my_deals")],
+        [InlineKeyboardButton(text=btns['referrals'], callback_data="referrals"),
+         InlineKeyboardButton(text=btns['language'], callback_data="language")],
+        [InlineKeyboardButton(text=btns['support'], callback_data="support")]
     ])
     return builder
 
-def admin_panel():
+def admin_panel(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
     builder = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📨 Ответить пользователю", callback_data="admin_chat"),
-         InlineKeyboardButton(text="✅ Отметить оплату", callback_data="admin_hostlebuy")],
-        [InlineKeyboardButton(text="❌ Уведомить о подарке", callback_data="admin_ref"),
-         InlineKeyboardButton(text="⬆️ Накрутить сделки", callback_data="admin_boost")],
-        [InlineKeyboardButton(text="➕ Добавить баланс", callback_data="admin_add_balance"),
-         InlineKeyboardButton(text="📊 Заявки на вывод", callback_data="admin_withdraws")],
-        [InlineKeyboardButton(text="✅ Завершить сделку", callback_data="admin_complete_deal")],
-        [InlineKeyboardButton(text="📖 Справка", callback_data="admin_help")]
+        [InlineKeyboardButton(text=btns['admin_chat'], callback_data="admin_chat"),
+         InlineKeyboardButton(text=btns['admin_hostlebuy'], callback_data="admin_hostlebuy")],
+        [InlineKeyboardButton(text=btns['admin_ref'], callback_data="admin_ref"),
+         InlineKeyboardButton(text=btns['admin_boost'], callback_data="admin_boost")],
+        [InlineKeyboardButton(text=btns['admin_add_balance'], callback_data="admin_add_balance"),
+         InlineKeyboardButton(text=btns['admin_withdraws'], callback_data="admin_withdraws")],
+        [InlineKeyboardButton(text=btns['admin_complete_deal'], callback_data="admin_complete_deal")],
+        [InlineKeyboardButton(text=btns['admin_help'], callback_data="admin_help")]
     ])
     return builder
 
-def back_button():
+def back_button(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=btns['back'], callback_data="back_to_menu")]
     ])
 
-def requisites_menu():
+def requisites_menu(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✏️ Добавить/Изменить", callback_data="add_requisites")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=btns['add_requisites'], callback_data="add_requisites")],
+        [InlineKeyboardButton(text=btns['back'], callback_data="back_to_menu")]
+    ])
+
+def balance_menu(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btns['deposit'], callback_data="deposit"),
+         InlineKeyboardButton(text=btns['withdraw'], callback_data="withdraw")],
+        [InlineKeyboardButton(text=btns['back'], callback_data="back_to_menu")]
+    ])
+
+def withdraw_requests_menu(lang='ru'):
+    btns = BUTTONS.get(lang, BUTTONS['ru'])
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btns['approve_withdraw'], callback_data="approve_withdraw"),
+         InlineKeyboardButton(text=btns['reject_withdraw'], callback_data="reject_withdraw")],
+        [InlineKeyboardButton(text=btns['back'], callback_data="back_to_menu")]
     ])
 
 # ---------- Тексты с форматированием ----------
 TEXTS = {
     'ru': {
-        'welcome': "Добро пожаловать в GGSel! 🚀\n\n"
+        'welcome': "🌟 <b>Добро пожаловать в GGSel!</b> 🚀\n\n"
                    "Ваш надёжный P2P-гарант:\n"
-                   "1. Автоматические сделки с NFT и валютами\n"
-                   "2. Полная защита обеих сторон\n"
-                   "3. Реферальная программа — 50% от комиссии\n"
-                   "4. Передача товаров происходит напрямую между участниками сделки.\n"
-                   "   В случае возникновения вопросов обращайтесь в техподдержку.",
-        'requisites': "Ваши реквизиты:\n{requisites}",
-        'no_requisites': "У вас пока нет реквизитов. Добавьте их.",
-        'enter_requisites': "Введите текст ваших реквизитов (например, номер карты или кошелька):",
-        'requisites_saved': "Реквизиты успешно сохранены!",
-        'choose_currency': "Выберите валюту оплаты:",
-        'enter_amount': "Введите сумму сделки:",
-        'enter_description': "Введите описание товара:",
-        'enter_nft_link': "Введите ссылку на NFT (или другой товар):",
+                   "▸ Автоматические сделки с NFT и валютами\n"
+                   "▸ Полная защита обеих сторон\n"
+                   "▸ Реферальная программа — 50% от комиссии\n"
+                   "▸ Передача товара осуществляется <u>напрямую между участниками</u> сделки.\n"
+                   "   В случае возникновения вопросов — обращайтесь в <b>техподдержку</b>.",
+        'requisites': "💎 <b>Ваши реквизиты:</b>\n\n{hblockquote(requisites)}",
+        'no_requisites': "📌 У вас пока нет реквизитов. Добавьте их, нажав кнопку ниже.",
+        'enter_requisites': "✏️ Введите текст ваших реквизитов (номер карты, кошелёк и т.п.):",
+        'requisites_saved': "✅ <b>Реквизиты сохранены!</b>",
+        'choose_currency': "💱 <b>Выберите валюту оплаты:</b>",
+        'enter_amount': "🔢 <b>Введите сумму сделки:</b>",
+        'enter_description': "📝 <b>Введите описание товара:</b>",
+        'enter_nft_link': "🔗 <b>Введите ссылку на NFT</b> (или другой товар):",
         'deal_created': "✅ <b>Сделка создана!</b>\n\n"
-                        f"{hblockquote('Код сделки: {memo}')}\n"
-                        f"{hblockquote('Ссылка для приглашения:')}\n"
+                        f"{hblockquote('Код сделки: {memo}')}\n\n"
+                        f"{hblockquote('Ссылка для приглашения покупателя:')}\n"
                         "https://t.me/{bot_username}?start=deal_{memo}\n\n"
                         "<i>Ожидайте, пока партнер присоединится.</i>",
         'deal_joined': "✅ <b>Вы присоединились к сделке!</b>\n\n"
-                       f"{hblockquote('Важно: передача товара осуществляется продавцом покупателю после подтверждения оплаты.')}\n"
-                       "<i>Ожидайте, пока администратор отметит оплату и завершит сделку.</i>",
+                       f"{hblockquote('Важно: передача товара осуществляется продавцом покупателю ТОЛЬКО через этого бота.')}\n"
+                       f"{hblockquote('После подтверждения оплаты администратор завершит сделку.')}\n\n"
+                       "<i>Никаких внешних переводов — всё проходит через гаранта.</i>",
         'balance': "💰 <b>Ваш баланс:</b> {balance} TON\n\n"
                    "✅ <b>Успешных сделок:</b> {successful_deals}",
-        'withdraw_info': "Для вывода необходимо завершить минимум 2 сделки. У вас: {successful_deals}",
-        'enter_withdraw_amount': "Введите сумму для вывода (в TON):",
-        'withdraw_request_sent': "Заявка на вывод отправлена администратору.",
+        'withdraw_info': "Для вывода необходимо завершить минимум 2 сделки.\nУ вас: {successful_deals}",
+        'enter_withdraw_amount': "💸 <b>Введите сумму для вывода (в TON):</b>",
+        'withdraw_request_sent': "📤 Заявка на вывод отправлена администратору.",
         'not_enough_deals': "❌ У вас недостаточно завершенных сделок для вывода. Требуется: 2",
         'referral_info': "🔗 <b>Ваша реферальная ссылка:</b>\n"
                          "https://t.me/{bot_username}?start=ref_{user_id}\n\n"
-                         "За каждого приглашенного вы получаете <b>1 TON</b> бонуса после его первой успешной сделки.",
-        'support': "Напишите ваше сообщение в поддержку. Мы ответим вам как можно скорее.",
+                         "🎁 За каждого приглашенного вы получаете <b>1 TON</b> бонуса после его первой успешной сделки.",
+        'support': "🛠 <b>Напишите ваше сообщение в поддержку.</b>\nМы ответим вам как можно скорее.",
         'support_sent': "✅ Ваше сообщение отправлено в поддержку.",
         'language_changed': "🌐 Язык изменен на русский.",
         'my_deals': "📋 <b>Ваши сделки:</b>\n{deals_list}",
@@ -366,41 +437,48 @@ TEXTS = {
         'deal_completed_buyer': "✅ <b>Сделка {memo} успешно завершена!</b>\n\n"
                                 f"{hblockquote('Товар передан продавцом. Спасибо за покупку!')}\n"
                                 "<i>Если у вас возникли вопросы, обратитесь в техподдержку.</i>",
+        'deal_paid_user': "💳 <b>Ваша сделка {memo} оплачена!</b>\n\n"
+                          f"{hblockquote('Покупатель подтвердил оплату. Теперь вы можете передать товар.')}\n"
+                          "<i>После передачи нажмите «Завершить сделку» в админ-панели.</i>",
+        'deal_paid_buyer': "💳 <b>Сделка {memo} оплачена!</b>\n\n"
+                           f"{hblockquote('Ожидайте, пока продавец передаст товар.')}\n"
+                           "<i>Если возникнут проблемы — обратитесь в поддержку.</i>",
     },
     'en': {
-        'welcome': "Welcome to GGSel! 🚀\n\n"
+        'welcome': "🌟 <b>Welcome to GGSel!</b> 🚀\n\n"
                    "Your reliable P2P guarantor:\n"
-                   "1. Automatic deals with NFT and currencies\n"
-                   "2. Full protection of both parties\n"
-                   "3. Referral program — 50% of commission\n"
-                   "4. Goods are transferred directly between deal participants.\n"
-                   "   If you have any questions, contact support.",
-        'requisites': "Your requisites:\n{requisites}",
-        'no_requisites': "You have no requisites yet. Add them.",
-        'enter_requisites': "Enter your requisites (e.g., card number or wallet):",
-        'requisites_saved': "Requisites saved successfully!",
-        'choose_currency': "Choose payment currency:",
-        'enter_amount': "Enter deal amount:",
-        'enter_description': "Enter product description:",
-        'enter_nft_link': "Enter NFT link (or other product):",
+                   "▸ Automatic deals with NFT and currencies\n"
+                   "▸ Full protection of both parties\n"
+                   "▸ Referral program — 50% of commission\n"
+                   "▸ Goods are transferred <u>directly between participants</u> of the deal.\n"
+                   "   If you have any questions, contact <b>support</b>.",
+        'requisites': "💎 <b>Your requisites:</b>\n\n{hblockquote(requisites)}",
+        'no_requisites': "📌 You have no requisites yet. Add them using the button below.",
+        'enter_requisites': "✏️ Enter your requisites (card number, wallet, etc.):",
+        'requisites_saved': "✅ <b>Requisites saved!</b>",
+        'choose_currency': "💱 <b>Choose payment currency:</b>",
+        'enter_amount': "🔢 <b>Enter deal amount:</b>",
+        'enter_description': "📝 <b>Enter product description:</b>",
+        'enter_nft_link': "🔗 <b>Enter NFT link</b> (or other product):",
         'deal_created': "✅ <b>Deal created!</b>\n\n"
-                        f"{hblockquote('Deal code: {memo}')}\n"
-                        f"{hblockquote('Invitation link:')}\n"
+                        f"{hblockquote('Deal code: {memo}')}\n\n"
+                        f"{hblockquote('Invitation link for buyer:')}\n"
                         "https://t.me/{bot_username}?start=deal_{memo}\n\n"
                         "<i>Wait for partner to join.</i>",
         'deal_joined': "✅ <b>You joined the deal!</b>\n\n"
-                       f"{hblockquote('Important: goods are transferred by the seller to the buyer after payment confirmation.')}\n"
-                       "<i>Wait for admin to mark payment and complete the deal.</i>",
+                       f"{hblockquote('Important: goods are transferred by the seller to the buyer ONLY through this bot.')}\n"
+                       f"{hblockquote('After payment confirmation, the admin will complete the deal.')}\n\n"
+                       "<i>No external transfers — everything goes through the guarantor.</i>",
         'balance': "💰 <b>Your balance:</b> {balance} TON\n\n"
                    "✅ <b>Successful deals:</b> {successful_deals}",
-        'withdraw_info': "You need at least 2 completed deals to withdraw. You have: {successful_deals}",
-        'enter_withdraw_amount': "Enter amount to withdraw (in TON):",
-        'withdraw_request_sent': "Withdrawal request sent to admin.",
+        'withdraw_info': "You need at least 2 completed deals to withdraw.\nYou have: {successful_deals}",
+        'enter_withdraw_amount': "💸 <b>Enter amount to withdraw (in TON):</b>",
+        'withdraw_request_sent': "📤 Withdrawal request sent to admin.",
         'not_enough_deals': "❌ You don't have enough completed deals to withdraw. Required: 2",
         'referral_info': "🔗 <b>Your referral link:</b>\n"
                          "https://t.me/{bot_username}?start=ref_{user_id}\n\n"
-                         "For each invited user you get <b>1 TON</b> bonus after their first successful deal.",
-        'support': "Write your message to support. We will reply as soon as possible.",
+                         "🎁 For each invited user you get <b>1 TON</b> bonus after their first successful deal.",
+        'support': "🛠 <b>Write your message to support.</b>\nWe will reply as soon as possible.",
         'support_sent': "✅ Your message has been sent to support.",
         'language_changed': "🌐 Language changed to English.",
         'my_deals': "📋 <b>Your deals:</b>\n{deals_list}",
@@ -450,6 +528,12 @@ TEXTS = {
         'deal_completed_buyer': "✅ <b>Deal {memo} completed successfully!</b>\n\n"
                                 f"{hblockquote('The goods have been transferred by the seller. Thanks for your purchase!')}\n"
                                 "<i>If you have any questions, contact support.</i>",
+        'deal_paid_user': "💳 <b>Your deal {memo} is paid!</b>\n\n"
+                          f"{hblockquote('The buyer confirmed payment. Now you can transfer the goods.')}\n"
+                          "<i>After transfer, click «Complete deal» in admin panel.</i>",
+        'deal_paid_buyer': "💳 <b>Deal {memo} is paid!</b>\n\n"
+                           f"{hblockquote('Wait for the seller to transfer the goods.')}\n"
+                           "<i>If you encounter any issues, contact support.</i>",
     }
 }
 
@@ -459,9 +543,12 @@ bot = Bot(token=BOT_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
-def get_text(user_id, key, **kwargs):
+def get_user_lang(user_id):
     user = db.get_user(user_id)
-    lang = user[6] if user else 'ru'
+    return user[6] if user else 'ru'
+
+def get_text(user_id, key, **kwargs):
+    lang = get_user_lang(user_id)
     text = TEXTS.get(lang, TEXTS['ru']).get(key, key)
     return text.format(**kwargs) if kwargs else text
 
@@ -494,8 +581,8 @@ async def start_command(message: Message, state: FSMContext):
                         await message.answer(get_text(user_id, 'not_enough_balance'))
                         return
                     db.update_deal(deal[0], partner_id=user_id, status='active')
-                    # Отправляем красивое сообщение о присоединении
-                    await send_banner_message(user_id, get_text(user_id, 'deal_joined'), reply_markup=main_menu(get_text(user_id, 'lang')))
+                    lang = get_user_lang(user_id)
+                    await send_banner_message(user_id, get_text(user_id, 'deal_joined'), reply_markup=main_menu(lang))
                 else:
                     await message.answer("❌ Эта сделка уже недоступна.")
             else:
@@ -511,30 +598,33 @@ async def start_command(message: Message, state: FSMContext):
     else:
         db.update_user(user_id, username=username, first_name=first_name)
 
+    lang = get_user_lang(user_id)
     text = get_text(user_id, 'welcome')
-    await send_banner_message(user_id, text, reply_markup=main_menu(get_text(user_id, 'lang')))
+    await send_banner_message(user_id, text, reply_markup=main_menu(lang))
 
 # Назад в меню
 @dp.callback_query(F.data == "back_to_menu")
 async def back_to_menu(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     text = get_text(user_id, 'welcome')
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=main_menu(get_text(user_id, 'lang')))
+    await send_banner_message(user_id, text, reply_markup=main_menu(lang))
     await callback.answer()
 
 # Мои реквизиты
 @dp.callback_query(F.data == "requisites")
 async def requisites_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     req = db.get_user_requisites(user_id)
     if req:
-        text = get_text(user_id, 'requisites', requisites=hblockquote(req))
+        text = get_text(user_id, 'requisites', requisites=req)
     else:
         text = get_text(user_id, 'no_requisites')
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=requisites_menu())
+    await send_banner_message(user_id, text, reply_markup=requisites_menu(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "add_requisites")
@@ -549,7 +639,8 @@ async def requisites_text(message: Message, state: FSMContext):
     user_id = message.from_user.id
     db.set_requisites(user_id, message.text)
     await state.clear()
-    await send_banner_message(user_id, get_text(user_id, 'requisites_saved'), reply_markup=main_menu(get_text(user_id, 'lang')))
+    lang = get_user_lang(user_id)
+    await send_banner_message(user_id, get_text(user_id, 'requisites_saved'), reply_markup=main_menu(lang))
 
 # Создать сделку
 @dp.callback_query(F.data == "create_deal")
@@ -559,7 +650,7 @@ async def create_deal_start(callback: CallbackQuery, state: FSMContext):
         [InlineKeyboardButton(text="TON", callback_data="currency_ton"),
          InlineKeyboardButton(text="USDT", callback_data="currency_usdt")],
         [InlineKeyboardButton(text="RUB", callback_data="currency_rub")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=BUTTONS[get_user_lang(callback.from_user.id)]['back'], callback_data="back_to_menu")]
     ])
     await callback.message.delete()
     await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'choose_currency'), reply_markup=keyboard)
@@ -600,30 +691,28 @@ async def nft_link_entered(message: Message, state: FSMContext):
     await state.clear()
     bot_username = (await bot.me()).username
     text = get_text(user_id, 'deal_created', memo=deal_id, bot_username=bot_username)
-    await send_banner_message(user_id, text, reply_markup=main_menu(get_text(user_id, 'lang')))
+    lang = get_user_lang(user_id)
+    await send_banner_message(user_id, text, reply_markup=main_menu(lang))
 
 # Баланс
 @dp.callback_query(F.data == "balance")
 async def balance_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     balance = db.get_user_balance(user_id)
     successful_deals = db.get_successful_deals_count(user_id)
     text = get_text(user_id, 'balance', balance=balance, successful_deals=successful_deals)
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Пополнить", callback_data="deposit"),
-         InlineKeyboardButton(text="💸 Вывести", callback_data="withdraw")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
-    ])
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=keyboard)
+    await send_banner_message(user_id, text, reply_markup=balance_menu(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "deposit")
 async def deposit_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     text = f"💳 <b>Пополнение баланса</b>\n\nПереведите TON на кошелек:\n<code>UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</code>\n\nВ комментарии укажите ваш ID: <b>{user_id}</b>\n\nПосле зачисления средства будут добавлены вручную администратором."
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=back_button())
+    await send_banner_message(user_id, text, reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "withdraw")
@@ -631,8 +720,9 @@ async def withdraw_handler(callback: CallbackQuery, state: FSMContext):
     user_id = callback.from_user.id
     successful_deals = db.get_successful_deals_count(user_id)
     if successful_deals < 2:
+        lang = get_user_lang(user_id)
         await callback.message.delete()
-        await send_banner_message(user_id, get_text(user_id, 'not_enough_deals'), reply_markup=back_button())
+        await send_banner_message(user_id, get_text(user_id, 'not_enough_deals'), reply_markup=back_button(lang))
         await callback.answer()
         return
     await state.set_state(Withdraw.amount)
@@ -658,12 +748,14 @@ async def withdraw_amount(message: Message, state: FSMContext):
         return
     db.create_withdraw_request(user_id, amount, requisites)
     await state.clear()
-    await send_banner_message(user_id, get_text(user_id, 'withdraw_request_sent'), reply_markup=main_menu(get_text(user_id, 'lang')))
+    lang = get_user_lang(user_id)
+    await send_banner_message(user_id, get_text(user_id, 'withdraw_request_sent'), reply_markup=main_menu(lang))
 
 # Мои сделки
 @dp.callback_query(F.data == "my_deals")
 async def my_deals_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     deals = db.get_user_deals(user_id)
     if not deals:
         text = get_text(user_id, 'no_deals')
@@ -681,17 +773,18 @@ async def my_deals_handler(callback: CallbackQuery):
             lines.append(f"<b>{deal[0]}</b> — {deal[3]} {deal[4]} — {status}")
         text = get_text(user_id, 'my_deals', deals_list='\n'.join(lines))
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=back_button())
+    await send_banner_message(user_id, text, reply_markup=back_button(lang))
     await callback.answer()
 
 # Рефералы
 @dp.callback_query(F.data == "referrals")
 async def referrals_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     bot_username = (await bot.me()).username
     text = get_text(user_id, 'referral_info', bot_username=bot_username, user_id=user_id)
     await callback.message.delete()
-    await send_banner_message(user_id, text, reply_markup=back_button())
+    await send_banner_message(user_id, text, reply_markup=back_button(lang))
     await callback.answer()
 
 # Язык
@@ -701,7 +794,7 @@ async def language_handler(callback: CallbackQuery):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru"),
          InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=BUTTONS[get_user_lang(user_id)]['back'], callback_data="back_to_menu")]
     ])
     await callback.message.delete()
     await send_banner_message(user_id, "🌐 Выберите язык / Choose language:", reply_markup=keyboard)
@@ -722,7 +815,7 @@ async def lang_chosen(callback: CallbackQuery):
 async def support_handler(callback: CallbackQuery, state: FSMContext):
     await state.set_state("support_message")
     await callback.message.delete()
-    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'support'), reply_markup=back_button())
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'support'), reply_markup=back_button(get_user_lang(callback.from_user.id)))
     await callback.answer()
 
 @dp.message(StateFilter("support_message"))
@@ -732,7 +825,8 @@ async def support_message(message: Message, state: FSMContext):
     db.create_support_ticket(user_id, text)
     await bot.send_message(ADMIN_ID, f"📩 Новое обращение от {user_id} (@{message.from_user.username}):\n\n{text}")
     await state.clear()
-    await send_banner_message(user_id, get_text(user_id, 'support_sent'), reply_markup=main_menu(get_text(user_id, 'lang')))
+    lang = get_user_lang(user_id)
+    await send_banner_message(user_id, get_text(user_id, 'support_sent'), reply_markup=main_menu(lang))
 
 # ---------- Админ-панель ----------
 @dp.message(Command("wrteam"))
@@ -741,7 +835,8 @@ async def admin_panel_command(message: Message):
         await message.answer("⛔ У вас нет доступа.")
         return
     await message.delete()
-    await send_banner_message(message.from_user.id, get_text(ADMIN_ID, 'admin_panel'), reply_markup=admin_panel())
+    lang = get_user_lang(ADMIN_ID)
+    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_panel'), reply_markup=admin_panel(lang))
 
 @dp.callback_query(F.data == "admin_help")
 async def admin_help(callback: CallbackQuery):
@@ -749,7 +844,8 @@ async def admin_help(callback: CallbackQuery):
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button())
+    lang = get_user_lang(ADMIN_ID)
+    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.callback_query(F.data == "admin_chat")
@@ -758,7 +854,8 @@ async def admin_chat_callback(callback: CallbackQuery):
         await callback.answer("⛔ Нет доступа", show_alert=True)
         return
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_chat_instruction'), reply_markup=back_button())
+    lang = get_user_lang(ADMIN_ID)
+    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_chat_instruction'), reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.message(Command("chat"))
@@ -810,9 +907,9 @@ async def hostlebuy_memo(message: Message, state: FSMContext):
     db.update_deal(deal[0], status='paid')
     creator_id, partner_id = deal[1], deal[2]
     if creator_id:
-        await bot.send_message(creator_id, f"✅ Ваша сделка {memo} отмечена как оплаченная. Ожидайте завершения.")
+        await bot.send_message(creator_id, get_text(creator_id, 'deal_paid_user', memo=memo), parse_mode='HTML')
     if partner_id:
-        await bot.send_message(partner_id, f"✅ Сделка {memo} отмечена как оплаченная. Подтвердите получение товара.")
+        await bot.send_message(partner_id, get_text(partner_id, 'deal_paid_buyer', memo=memo), parse_mode='HTML')
     await message.answer(get_text(ADMIN_ID, 'payment_marked', memo=memo))
     await state.clear()
 
@@ -883,7 +980,7 @@ async def boost_count(message: Message, state: FSMContext):
     await message.answer(get_text(ADMIN_ID, 'boost_success', user_id=user_id, count=count))
     await state.clear()
 
-# add_balance (исправлено: добавлено уведомление пользователю)
+# add_balance
 @dp.callback_query(F.data == "admin_add_balance")
 async def admin_add_balance_callback(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -919,13 +1016,13 @@ async def add_balance_amount(message: Message, state: FSMContext):
     data = await state.get_data()
     user_id = data['user_id']
     db.add_balance(user_id, amount)
-    # Отправляем уведомление пользователю
+    # Уведомление пользователю
     user_text = get_text(user_id, 'balance_notification', amount=amount)
     await bot.send_message(user_id, user_text, parse_mode='HTML')
     await message.answer(get_text(ADMIN_ID, 'balance_added', user_id=user_id, amount=amount))
     await state.clear()
 
-# complete_deal (исправлено: улучшены уведомления)
+# complete_deal
 @dp.callback_query(F.data == "admin_complete_deal")
 async def admin_complete_deal_callback(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -983,14 +1080,14 @@ async def complete_deal_memo(message: Message, state: FSMContext):
     db.update_deal(deal[0], status='completed', completed_at=datetime.now().isoformat())
     await message.answer(get_text(ADMIN_ID, 'deal_completed', memo=memo))
 
-    # Уведомления участникам (красиво оформленные)
+    # Уведомления участникам
     if creator_id:
         await bot.send_message(creator_id, get_text(creator_id, 'deal_completed_user', memo=memo), parse_mode='HTML')
     if partner_id:
         await bot.send_message(partner_id, get_text(partner_id, 'deal_completed_buyer', memo=memo), parse_mode='HTML')
     await state.clear()
 
-# Withdraw requests (просмотр)
+# Withdraw requests
 @dp.callback_query(F.data == "admin_withdraws")
 async def admin_withdraws(callback: CallbackQuery):
     if callback.from_user.id != ADMIN_ID:
@@ -1004,16 +1101,11 @@ async def admin_withdraws(callback: CallbackQuery):
         for req in requests:
             lines.append(f"<b>ID заявки:</b> {req[0]}, <b>Пользователь:</b> {req[1]}, <b>Сумма:</b> {req[2]}, <b>Реквизиты:</b> {req[3]}")
         text = get_text(ADMIN_ID, 'withdraw_requests', requests='\n'.join(lines))
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✅ Подтвердить", callback_data="approve_withdraw"),
-         InlineKeyboardButton(text="❌ Отклонить", callback_data="reject_withdraw")],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
-    ])
+    lang = get_user_lang(ADMIN_ID)
     await callback.message.delete()
-    await send_banner_message(ADMIN_ID, text, reply_markup=keyboard)
+    await send_banner_message(ADMIN_ID, text, reply_markup=withdraw_requests_menu(lang))
     await callback.answer()
 
-# Обработка подтверждения/отклонения заявок
 @dp.callback_query(F.data == "approve_withdraw")
 async def approve_withdraw(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -1066,7 +1158,8 @@ async def gtteam_command(message: Message):
     if message.from_user.id != ADMIN_ID:
         await message.answer("⛔ Нет доступа.")
         return
-    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button())
+    lang = get_user_lang(ADMIN_ID)
+    await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button(lang))
 
 # ---------- Веб-сервер для Render ----------
 async def handle_health(request):
