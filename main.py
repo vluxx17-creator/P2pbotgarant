@@ -281,10 +281,16 @@ def requisites_menu():
         [InlineKeyboardButton(text="🔙 Назад", callback_data="back_to_menu")]
     ])
 
-# ---------- Тексты ----------
+# ---------- Тексты с форматированием ----------
 TEXTS = {
     'ru': {
-        'welcome': "Добро пожаловать в GGSel! 🚀\n\nВаш надёжный P2P-гарант:\n1. Автоматические сделки с NFT и валютами\n2. Полная защита обеих сторон\n3. Реферальная программа — 50% от комиссии\n4. Передача товаров через менеджера: @GGselSupp",
+        'welcome': "Добро пожаловать в GGSel! 🚀\n\n"
+                   "Ваш надёжный P2P-гарант:\n"
+                   "1. Автоматические сделки с NFT и валютами\n"
+                   "2. Полная защита обеих сторон\n"
+                   "3. Реферальная программа — 50% от комиссии\n"
+                   "4. Передача товаров происходит напрямую между участниками сделки.\n"
+                   "   В случае возникновения вопросов обращайтесь в техподдержку.",
         'requisites': "Ваши реквизиты:\n{requisites}",
         'no_requisites': "У вас пока нет реквизитов. Добавьте их.",
         'enter_requisites': "Введите текст ваших реквизитов (например, номер карты или кошелька):",
@@ -293,13 +299,23 @@ TEXTS = {
         'enter_amount': "Введите сумму сделки:",
         'enter_description': "Введите описание товара:",
         'enter_nft_link': "Введите ссылку на NFT (или другой товар):",
-        'deal_created': "Сделка создана!\n\n<b>Код сделки:</b> {memo}\n<b>Ссылка для приглашения:</b>\nhttps://t.me/{bot_username}?start=deal_{memo}\n\nОжидайте, пока партнер присоединится.",
-        'balance': "💰 <b>Ваш баланс:</b> {balance} TON\n\n✅ <b>Успешных сделок:</b> {successful_deals}",
+        'deal_created': "✅ <b>Сделка создана!</b>\n\n"
+                        f"{hblockquote('Код сделки: {memo}')}\n"
+                        f"{hblockquote('Ссылка для приглашения:')}\n"
+                        "https://t.me/{bot_username}?start=deal_{memo}\n\n"
+                        "<i>Ожидайте, пока партнер присоединится.</i>",
+        'deal_joined': "✅ <b>Вы присоединились к сделке!</b>\n\n"
+                       f"{hblockquote('Важно: передача товара осуществляется продавцом покупателю после подтверждения оплаты.')}\n"
+                       "<i>Ожидайте, пока администратор отметит оплату и завершит сделку.</i>",
+        'balance': "💰 <b>Ваш баланс:</b> {balance} TON\n\n"
+                   "✅ <b>Успешных сделок:</b> {successful_deals}",
         'withdraw_info': "Для вывода необходимо завершить минимум 2 сделки. У вас: {successful_deals}",
         'enter_withdraw_amount': "Введите сумму для вывода (в TON):",
         'withdraw_request_sent': "Заявка на вывод отправлена администратору.",
         'not_enough_deals': "❌ У вас недостаточно завершенных сделок для вывода. Требуется: 2",
-        'referral_info': "🔗 <b>Ваша реферальная ссылка:</b>\nhttps://t.me/{bot_username}?start=ref_{user_id}\n\nЗа каждого приглашенного вы получаете <b>1 TON</b> бонуса после его первой успешной сделки.",
+        'referral_info': "🔗 <b>Ваша реферальная ссылка:</b>\n"
+                         "https://t.me/{bot_username}?start=ref_{user_id}\n\n"
+                         "За каждого приглашенного вы получаете <b>1 TON</b> бонуса после его первой успешной сделки.",
         'support': "Напишите ваше сообщение в поддержку. Мы ответим вам как можно скорее.",
         'support_sent': "✅ Ваше сообщение отправлено в поддержку.",
         'language_changed': "🌐 Язык изменен на русский.",
@@ -311,7 +327,14 @@ TEXTS = {
         'deal_status_completed': "✅ Завершена",
         'deal_status_cancelled': "❌ Отменена",
         'admin_panel': "⚙️ <b>Админ-панель</b>",
-        'admin_help': "📖 <b>Команды администратора:</b>\n\n/chat @username текст — ответить пользователю\n/hostlebuy memo — отметить оплату\n/ref deal_id — уведомление о подарке\n/boost_success user_id count — накрутить успешные сделки\n/add_balance user_id amount — добавить баланс\n/complete_deal memo — завершить сделку\n/gtteam — показать эту справку",
+        'admin_help': "📖 <b>Команды администратора:</b>\n\n"
+                      "/chat @username текст — ответить пользователю\n"
+                      "/hostlebuy memo — отметить оплату\n"
+                      "/ref deal_id — уведомление о подарке\n"
+                      "/boost_success user_id count — накрутить успешные сделки\n"
+                      "/add_balance user_id amount — добавить баланс\n"
+                      "/complete_deal memo — завершить сделку\n"
+                      "/gtteam — показать эту справку",
         'enter_username': "Введите @username пользователя для ответа:",
         'enter_reply_message': "Введите текст ответа:",
         'reply_sent': "✅ Ответ отправлен.",
@@ -325,6 +348,9 @@ TEXTS = {
         'enter_user_id_add_balance': "Введите ID пользователя для добавления баланса:",
         'enter_amount_add_balance': "Введите сумму для добавления:",
         'balance_added': "✅ Баланс пользователя {user_id} увеличен на {amount}.",
+        'balance_notification': "💎 <b>Ваш баланс пополнен!</b>\n\n"
+                                f"{hblockquote('Сумма: {amount} TON')}\n"
+                                "<i>Текущий баланс можно проверить в разделе «Баланс».</i>",
         'withdraw_requests': "📊 <b>Заявки на вывод:</b>\n{requests}",
         'no_withdraw_requests': "Нет заявок на вывод.",
         'admin_chat_instruction': "Используйте команду /chat @username текст для ответа.",
@@ -334,9 +360,21 @@ TEXTS = {
         'deal_not_active': "❌ Сделка неактивна.",
         'not_enough_balance': "❌ У покупателя недостаточно средств на балансе.",
         'support_reply': "✉️ <b>Ответ поддержки:</b>\n\n{reply}",
+        'deal_completed_user': "✅ <b>Сделка {memo} успешно завершена!</b>\n\n"
+                               f"{hblockquote('Средства зачислены на ваш баланс.')}\n"
+                               "<i>Спасибо, что пользуетесь GGSel!</i>",
+        'deal_completed_buyer': "✅ <b>Сделка {memo} успешно завершена!</b>\n\n"
+                                f"{hblockquote('Товар передан продавцом. Спасибо за покупку!')}\n"
+                                "<i>Если у вас возникли вопросы, обратитесь в техподдержку.</i>",
     },
     'en': {
-        'welcome': "Welcome to GGSel! 🚀\n\nYour reliable P2P guarantor:\n1. Automatic deals with NFT and currencies\n2. Full protection of both parties\n3. Referral program — 50% of commission\n4. Transfer of goods via manager: @GGselSupp",
+        'welcome': "Welcome to GGSel! 🚀\n\n"
+                   "Your reliable P2P guarantor:\n"
+                   "1. Automatic deals with NFT and currencies\n"
+                   "2. Full protection of both parties\n"
+                   "3. Referral program — 50% of commission\n"
+                   "4. Goods are transferred directly between deal participants.\n"
+                   "   If you have any questions, contact support.",
         'requisites': "Your requisites:\n{requisites}",
         'no_requisites': "You have no requisites yet. Add them.",
         'enter_requisites': "Enter your requisites (e.g., card number or wallet):",
@@ -345,13 +383,23 @@ TEXTS = {
         'enter_amount': "Enter deal amount:",
         'enter_description': "Enter product description:",
         'enter_nft_link': "Enter NFT link (or other product):",
-        'deal_created': "Deal created!\n\n<b>Deal code:</b> {memo}\n<b>Invitation link:</b>\nhttps://t.me/{bot_username}?start=deal_{memo}\n\nWait for partner to join.",
-        'balance': "💰 <b>Your balance:</b> {balance} TON\n\n✅ <b>Successful deals:</b> {successful_deals}",
+        'deal_created': "✅ <b>Deal created!</b>\n\n"
+                        f"{hblockquote('Deal code: {memo}')}\n"
+                        f"{hblockquote('Invitation link:')}\n"
+                        "https://t.me/{bot_username}?start=deal_{memo}\n\n"
+                        "<i>Wait for partner to join.</i>",
+        'deal_joined': "✅ <b>You joined the deal!</b>\n\n"
+                       f"{hblockquote('Important: goods are transferred by the seller to the buyer after payment confirmation.')}\n"
+                       "<i>Wait for admin to mark payment and complete the deal.</i>",
+        'balance': "💰 <b>Your balance:</b> {balance} TON\n\n"
+                   "✅ <b>Successful deals:</b> {successful_deals}",
         'withdraw_info': "You need at least 2 completed deals to withdraw. You have: {successful_deals}",
         'enter_withdraw_amount': "Enter amount to withdraw (in TON):",
         'withdraw_request_sent': "Withdrawal request sent to admin.",
         'not_enough_deals': "❌ You don't have enough completed deals to withdraw. Required: 2",
-        'referral_info': "🔗 <b>Your referral link:</b>\nhttps://t.me/{bot_username}?start=ref_{user_id}\n\nFor each invited user you get <b>1 TON</b> bonus after their first successful deal.",
+        'referral_info': "🔗 <b>Your referral link:</b>\n"
+                         "https://t.me/{bot_username}?start=ref_{user_id}\n\n"
+                         "For each invited user you get <b>1 TON</b> bonus after their first successful deal.",
         'support': "Write your message to support. We will reply as soon as possible.",
         'support_sent': "✅ Your message has been sent to support.",
         'language_changed': "🌐 Language changed to English.",
@@ -363,7 +411,14 @@ TEXTS = {
         'deal_status_completed': "✅ Completed",
         'deal_status_cancelled': "❌ Cancelled",
         'admin_panel': "⚙️ <b>Admin panel</b>",
-        'admin_help': "📖 <b>Admin commands:</b>\n\n/chat @username text — reply to user\n/hostlebuy memo — mark payment\n/ref deal_id — gift notification\n/boost_success user_id count — boost successful deals\n/add_balance user_id amount — add balance\n/complete_deal memo — complete deal\n/gtteam — show this help",
+        'admin_help': "📖 <b>Admin commands:</b>\n\n"
+                      "/chat @username text — reply to user\n"
+                      "/hostlebuy memo — mark payment\n"
+                      "/ref deal_id — gift notification\n"
+                      "/boost_success user_id count — boost successful deals\n"
+                      "/add_balance user_id amount — add balance\n"
+                      "/complete_deal memo — complete deal\n"
+                      "/gtteam — show this help",
         'enter_username': "Enter @username of user to reply:",
         'enter_reply_message': "Enter reply text:",
         'reply_sent': "✅ Reply sent.",
@@ -377,6 +432,9 @@ TEXTS = {
         'enter_user_id_add_balance': "Enter user ID to add balance:",
         'enter_amount_add_balance': "Enter amount to add:",
         'balance_added': "✅ Balance for user {user_id} increased by {amount}.",
+        'balance_notification': "💎 <b>Your balance has been replenished!</b>\n\n"
+                                f"{hblockquote('Amount: {amount} TON')}\n"
+                                "<i>You can check your current balance in the «Balance» section.</i>",
         'withdraw_requests': "📊 <b>Withdrawal requests:</b>\n{requests}",
         'no_withdraw_requests': "No withdrawal requests.",
         'admin_chat_instruction': "Use command /chat @username text to reply.",
@@ -386,6 +444,12 @@ TEXTS = {
         'deal_not_active': "❌ Deal is not active.",
         'not_enough_balance': "❌ Buyer has insufficient balance.",
         'support_reply': "✉️ <b>Support reply:</b>\n\n{reply}",
+        'deal_completed_user': "✅ <b>Deal {memo} completed successfully!</b>\n\n"
+                               f"{hblockquote('Funds have been credited to your balance.')}\n"
+                               "<i>Thank you for using GGSel!</i>",
+        'deal_completed_buyer': "✅ <b>Deal {memo} completed successfully!</b>\n\n"
+                                f"{hblockquote('The goods have been transferred by the seller. Thanks for your purchase!')}\n"
+                                "<i>If you have any questions, contact support.</i>",
     }
 }
 
@@ -426,12 +490,12 @@ async def start_command(message: Message, state: FSMContext):
             deal = db.get_deal_by_memo(memo)
             if deal:
                 if deal[1] != user_id and deal[2] is None:
-                    # Проверка баланса покупателя
                     if db.get_user_balance(user_id) < deal[4]:
                         await message.answer(get_text(user_id, 'not_enough_balance'))
                         return
                     db.update_deal(deal[0], partner_id=user_id, status='active')
-                    await message.answer("✅ Вы присоединились к сделке! Ожидайте подтверждения оплаты.")
+                    # Отправляем красивое сообщение о присоединении
+                    await send_banner_message(user_id, get_text(user_id, 'deal_joined'), reply_markup=main_menu(get_text(user_id, 'lang')))
                 else:
                     await message.answer("❌ Эта сделка уже недоступна.")
             else:
@@ -711,7 +775,6 @@ async def chat_command(message: Message):
     try:
         chat = await bot.get_chat(username)
         user_id = chat.id
-        # Сохраняем ответ в тикет (последний тикет пользователя)
         tickets = db.get_tickets(user_id, resolved=False)
         if tickets:
             ticket = tickets[-1]
@@ -820,7 +883,7 @@ async def boost_count(message: Message, state: FSMContext):
     await message.answer(get_text(ADMIN_ID, 'boost_success', user_id=user_id, count=count))
     await state.clear()
 
-# add_balance
+# add_balance (исправлено: добавлено уведомление пользователю)
 @dp.callback_query(F.data == "admin_add_balance")
 async def admin_add_balance_callback(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -856,10 +919,13 @@ async def add_balance_amount(message: Message, state: FSMContext):
     data = await state.get_data()
     user_id = data['user_id']
     db.add_balance(user_id, amount)
+    # Отправляем уведомление пользователю
+    user_text = get_text(user_id, 'balance_notification', amount=amount)
+    await bot.send_message(user_id, user_text, parse_mode='HTML')
     await message.answer(get_text(ADMIN_ID, 'balance_added', user_id=user_id, amount=amount))
     await state.clear()
 
-# complete_deal
+# complete_deal (исправлено: улучшены уведомления)
 @dp.callback_query(F.data == "admin_complete_deal")
 async def admin_complete_deal_callback(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -883,11 +949,10 @@ async def complete_deal_memo(message: Message, state: FSMContext):
         await message.answer("❌ Сделка должна быть сначала отмечена как оплаченная (/hostlebuy).")
         return
 
-    # Завершаем сделку
     creator_id = deal[1]
     partner_id = deal[2]
     amount = deal[4]
-    # Проверяем баланс покупателя (партнера)
+
     if partner_id and db.get_user_balance(partner_id) < amount:
         await message.answer(get_text(ADMIN_ID, 'not_enough_balance'))
         return
@@ -897,29 +962,32 @@ async def complete_deal_memo(message: Message, state: FSMContext):
         db.add_balance(partner_id, -amount)
     if creator_id:
         db.add_balance(creator_id, amount)
+
     # Увеличиваем счетчик успешных сделок
     if creator_id:
         db.increment_successful_deals(creator_id)
     if partner_id:
         db.increment_successful_deals(partner_id)
-    # Реферальный бонус (50% от комиссии 5% = 2.5%)
+
+    # Реферальный бонус (50% от комиссии 5%)
     commission_rate = 0.05
     ref_bonus_rate = 0.5
     bonus = amount * commission_rate * ref_bonus_rate
-    # Даем бонус рефереру продавца (creator)
     if creator_id:
         creator = db.get_user(creator_id)
-        if creator and creator[4]:  # referral_id
+        if creator and creator[4]:
             referrer_id = creator[4]
             db.add_balance(referrer_id, bonus)
             db.add_referral_bonus(referrer_id, bonus, creator_id, deal[0])
+
     db.update_deal(deal[0], status='completed', completed_at=datetime.now().isoformat())
     await message.answer(get_text(ADMIN_ID, 'deal_completed', memo=memo))
-    # Уведомления
+
+    # Уведомления участникам (красиво оформленные)
     if creator_id:
-        await bot.send_message(creator_id, f"✅ Сделка {memo} успешно завершена! Средства зачислены на ваш баланс.")
+        await bot.send_message(creator_id, get_text(creator_id, 'deal_completed_user', memo=memo), parse_mode='HTML')
     if partner_id:
-        await bot.send_message(partner_id, f"✅ Сделка {memo} успешно завершена! Спасибо за покупку.")
+        await bot.send_message(partner_id, get_text(partner_id, 'deal_completed_buyer', memo=memo), parse_mode='HTML')
     await state.clear()
 
 # Withdraw requests (просмотр)
@@ -945,7 +1013,7 @@ async def admin_withdraws(callback: CallbackQuery):
     await send_banner_message(ADMIN_ID, text, reply_markup=keyboard)
     await callback.answer()
 
-# Обработка подтверждения/отклонения заявок (упрощенно — по номеру заявки)
+# Обработка подтверждения/отклонения заявок
 @dp.callback_query(F.data == "approve_withdraw")
 async def approve_withdraw(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id != ADMIN_ID:
@@ -1012,10 +1080,8 @@ def start_web():
 # ---------- Запуск ----------
 async def main():
     logging.basicConfig(level=logging.INFO)
-    # Запускаем веб-сервер в отдельной задаче
     loop = asyncio.get_event_loop()
     loop.create_task(asyncio.to_thread(start_web))
-    # Запускаем бота
     await dp.start_polling(bot, skip_updates=True)
 
 if __name__ == "__main__":
