@@ -527,7 +527,7 @@ TEXTS = {
                                "<i>Thank you for using GGSel!</i>",
         'deal_completed_buyer': "✅ <b>Deal {memo} completed successfully!</b>\n\n"
                                 f"{hblockquote('The goods have been transferred by the seller. Thanks for your purchase!')}\n"
-                                "<i>If you have any questions, contact support.</i>",
+                                "<i>If you encounter any issues, contact support.</i>",
         'deal_paid_user': "💳 <b>Your deal {memo} is paid!</b>\n\n"
                           f"{hblockquote('The buyer confirmed payment. Now you can transfer the goods.')}\n"
                           "<i>After transfer, click «Complete deal» in admin panel.</i>",
@@ -646,11 +646,12 @@ async def requisites_text(message: Message, state: FSMContext):
 @dp.callback_query(F.data == "create_deal")
 async def create_deal_start(callback: CallbackQuery, state: FSMContext):
     await state.set_state(DealCreation.currency)
+    lang = get_user_lang(callback.from_user.id)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="TON", callback_data="currency_ton"),
          InlineKeyboardButton(text="USDT", callback_data="currency_usdt")],
         [InlineKeyboardButton(text="RUB", callback_data="currency_rub")],
-        [InlineKeyboardButton(text=BUTTONS[get_user_lang(callback.from_user.id)]['back'], callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=BUTTONS[lang]['back'], callback_data="back_to_menu")]
     ])
     await callback.message.delete()
     await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'choose_currency'), reply_markup=keyboard)
@@ -782,7 +783,7 @@ async def referrals_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
     lang = get_user_lang(user_id)
     bot_username = (await bot.me()).username
-    text = get_text(user_id, 'referral_info', bot_username=bot_username, user_id=user_id)
+    text = get_text(user_id, 'referral_info', bot_username=bot_username)
     await callback.message.delete()
     await send_banner_message(user_id, text, reply_markup=back_button(lang))
     await callback.answer()
@@ -791,10 +792,11 @@ async def referrals_handler(callback: CallbackQuery):
 @dp.callback_query(F.data == "language")
 async def language_handler(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_lang(user_id)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru"),
          InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en")],
-        [InlineKeyboardButton(text=BUTTONS[get_user_lang(user_id)]['back'], callback_data="back_to_menu")]
+        [InlineKeyboardButton(text=BUTTONS[lang]['back'], callback_data="back_to_menu")]
     ])
     await callback.message.delete()
     await send_banner_message(user_id, "🌐 Выберите язык / Choose language:", reply_markup=keyboard)
@@ -814,8 +816,9 @@ async def lang_chosen(callback: CallbackQuery):
 @dp.callback_query(F.data == "support")
 async def support_handler(callback: CallbackQuery, state: FSMContext):
     await state.set_state("support_message")
+    lang = get_user_lang(callback.from_user.id)
     await callback.message.delete()
-    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'support'), reply_markup=back_button(get_user_lang(callback.from_user.id)))
+    await send_banner_message(callback.from_user.id, get_text(callback.from_user.id, 'support'), reply_markup=back_button(lang))
     await callback.answer()
 
 @dp.message(StateFilter("support_message"))
@@ -1161,20 +1164,22 @@ async def gtteam_command(message: Message):
     lang = get_user_lang(ADMIN_ID)
     await send_banner_message(ADMIN_ID, get_text(ADMIN_ID, 'admin_help'), reply_markup=back_button(lang))
 
-# ---------- Веб-сервер для Render ----------
+# ---------- Веб-сервер и запуск ----------
 async def handle_health(request):
     return web.Response(text="Bot is running")
 
-def start_web():
-    app = web.Application()
-    app.router.add_get('/', handle_health)
-    web.run_app(app, host='0.0.0.0', port=PORT)
-
-# ---------- Запуск ----------
 async def main():
     logging.basicConfig(level=logging.INFO)
-    loop = asyncio.get_event_loop()
-    loop.create_task(asyncio.to_thread(start_web))
+
+    # Запускаем веб-сервер в том же event loop
+    app = web.Application()
+    app.router.add_get('/', handle_health)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host='0.0.0.0', port=PORT)
+    await site.start()
+
+    # Запускаем бота
     await dp.start_polling(bot, skip_updates=True)
 
 if __name__ == "__main__":
